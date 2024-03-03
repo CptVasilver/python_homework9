@@ -1,4 +1,4 @@
-from models.models import RegistrationPage
+from demoqa_tests.models.models import RegistrationPage
 
 
 def test_filling_table():
