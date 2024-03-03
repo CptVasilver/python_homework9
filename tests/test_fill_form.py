@@ -4,7 +4,6 @@ from demoqa_tests.models.models import RegistrationPage
 def test_filling_table():
     registration_page = RegistrationPage()
     registration_page.open()
-    # filling form
     registration_page.fill_first_name('Yashaka')
     registration_page.fill_second_name('Selenium')
     registration_page.fill_email('Examplum@mulpmaxe.com')
@@ -19,10 +18,8 @@ def test_filling_table():
     registration_page.fill_city('Noida')
     registration_page.submit('submit')
 
-    # check for successfully filled tab
     registration_page.assert_filled_table()
 
-    # check for correct data
     registration_page.assert_user_data(
         'Yashaka Selenium',
         'Examplum@mulpmaxe.com',
