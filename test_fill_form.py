@@ -1,37 +1,13 @@
-from models.models import RegistrationPage
+from models.models import RegistrationPage, User
 
 
-def test_filling_table():
+def test_fill():
     registration_page = RegistrationPage()
+    user = User(first_name='Yashaka', second_name='Selenium', email='Examplum@mulpmaxe.com',
+                gender='Male', phone_number=8005553535, day_of_birth=19,
+                month_of_birth='November', year_of_birth=1900,
+                subjects='Maths', hobbies=['Reading', 'Music'], picture='pic.png',
+                address='Colorado-Springs', state='NCR', city='Noida')
     registration_page.open()
-    # filling form
-    registration_page.fill_first_name('Yashaka')
-    registration_page.fill_second_name('Selenium')
-    registration_page.fill_email('Examplum@mulpmaxe.com')
-    registration_page.choose_gender('Male')
-    registration_page.fill_phone_number('8005553535')
-    registration_page.fill_date_of_birth('1900', 'Nov', '19')
-    registration_page.fill_subjects('Math')
-    registration_page.fill_hobbies(['Reading', 'Music'])
-    registration_page.upload_picture('pic.png')
-    registration_page.fill_address('Colorado-Springs')
-    registration_page.fill_state('NCR')
-    registration_page.fill_city('Noida')
-    registration_page.submit('submit')
-
-    # check for successfully filled tab
-    registration_page.assert_filled_table()
-
-    # check for correct data
-    registration_page.assert_user_data(
-        'Yashaka Selenium',
-        'Examplum@mulpmaxe.com',
-        'Male',
-        '8005553535',
-        '19 November,1900',
-        'Maths',
-        'Reading, Music',
-        'pic.png',
-        'Colorado-Springs',
-        'NCR Noida')
-    registration_page.submit('closeLargeModal')
+    registration_page.register(user)
+    registration_page.should_have_registered(user)

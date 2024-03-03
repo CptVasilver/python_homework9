@@ -1,5 +1,26 @@
+from dataclasses import dataclass
 from selene import browser, be, have, command
 import os
+
+
+@dataclass
+class User:
+    first_name: str
+    second_name: str
+    email: str
+    gender: str
+    phone_number: int
+    day_of_birth: int
+    month_of_birth: str
+    year_of_birth: int
+    subjects: str
+    hobbies: [str]
+    picture: str
+    address: str
+    state: str
+    city: str
+
+
 class RegistrationPage:
 
     def open(self):
@@ -17,15 +38,20 @@ class RegistrationPage:
     def assert_user_data(self, full_name, email, gender,
                          phone_number, birthday, subjects, hobbies,
                          picture, address, state_city):
+        hobbiess = ''
+        for hobbie in hobbies:
+            if hobbiess == '':
+                hobbiess += hobbie
+            else: hobbiess += ', ' + hobbie
         browser.all('.table').all('td').even.should(
             have.exact_texts(
                 full_name,
                 email,
                 gender,
-                phone_number,
+                str(phone_number),
                 birthday,
                 subjects,
-                hobbies,
+                hobbiess,
                 picture,
                 address,
                 state_city))
@@ -66,3 +92,33 @@ class RegistrationPage:
 
     def assert_filled_table(self):
         browser.element('.modal-header').should(have.text('Thanks for submitting the form'))
+
+    def register(self, user: User):
+        self.fill_first_name(user.first_name)
+        self.fill_second_name(user.second_name)
+        self.fill_email(user.email)
+        self.choose_gender(user.gender)
+        self.fill_phone_number(user.phone_number)
+        self.fill_date_of_birth(user.year_of_birth, user.month_of_birth, user.day_of_birth)
+        self.fill_subjects(user.subjects)
+        self.fill_hobbies(user.hobbies)
+        self.upload_picture(user.picture)
+        self.fill_address(user.address)
+        self.fill_state(user.state)
+        self.fill_city(user.city)
+
+    def should_have_registered(self, user: User):
+        self.submit('submit')
+        self.assert_filled_table()
+        self.assert_user_data(
+            f'{user.first_name} {user.second_name}',
+            user.email,
+            user.gender,
+            user.phone_number,
+            f'{user.day_of_birth} {user.month_of_birth},{user.year_of_birth}',
+            user.subjects,
+            user.hobbies,
+            user.picture,
+            user.address,
+            f'{user.state} {user.city}')
+        self.submit('closeLargeModal')
