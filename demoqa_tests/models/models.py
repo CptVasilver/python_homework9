@@ -1,24 +1,7 @@
-from dataclasses import dataclass
-from selene import browser, be, have, command
-import os
+from selene import browser, be, have
 
-
-@dataclass
-class User:
-    first_name: str
-    second_name: str
-    email: str
-    gender: str
-    phone_number: int
-    day_of_birth: int
-    month_of_birth: str
-    year_of_birth: int
-    subjects: str
-    hobbies: [str]
-    picture: str
-    address: str
-    state: str
-    city: str
+from demoqa_tests.models.data import User
+from tests import conftest
 
 
 class RegistrationPage:
@@ -28,33 +11,6 @@ class RegistrationPage:
 
     def fill_first_name(self, value):
         browser.element('#firstName').should(be.blank).type(value)
-
-    def fill_date_of_birth(self, year, month, day):
-        browser.element('#dateOfBirthInput').click()
-        browser.element('.react-datepicker__month-select').type(month)
-        browser.element('.react-datepicker__year-select').type(year)
-        browser.element(f'.react-datepicker__day--0{day}').click()
-
-    def assert_user_data(self, full_name, email, gender,
-                         phone_number, birthday, subjects, hobbies,
-                         picture, address, state_city):
-        hobbiess = ''
-        for hobbie in hobbies:
-            if hobbiess == '':
-                hobbiess += hobbie
-            else: hobbiess += ', ' + hobbie
-        browser.all('.table').all('td').even.should(
-            have.exact_texts(
-                full_name,
-                email,
-                gender,
-                str(phone_number),
-                birthday,
-                subjects,
-                hobbiess,
-                picture,
-                address,
-                state_city))
 
     def fill_second_name(self, second_name):
         browser.element('#lastName').should(be.blank).type(second_name)
@@ -68,15 +24,21 @@ class RegistrationPage:
     def fill_phone_number(self, phone_number):
         browser.element('#userNumber').should(be.blank).type(phone_number)
 
+    def fill_date_of_birth(self, year, month, day):
+        browser.element('#dateOfBirthInput').click()
+        browser.element('.react-datepicker__month-select').type(month)
+        browser.element('.react-datepicker__year-select').type(year)
+        browser.element(f'.react-datepicker__day--0{day}').click()
+
     def fill_subjects(self, subject):
         browser.element('#subjectsInput').type(subject).press_enter()
 
     def fill_hobbies(self, hobbies):
-        for hobbie in hobbies:
-            browser.all('.custom-checkbox').element_by(have.exact_text(hobbie)).click()
+        for hobby in hobbies:
+            browser.all('.custom-checkbox').element_by(have.exact_text(hobby)).click()
 
     def upload_picture(self, pic):
-        browser.element('#uploadPicture').send_keys(os.path.abspath(pic))
+        browser.element('#uploadPicture').type(conftest.path(pic))
 
     def fill_address(self, address):
         browser.element('#currentAddress').should(be.blank).type(address)
@@ -89,6 +51,28 @@ class RegistrationPage:
 
     def submit(self, value):
         browser.element(f'#{value}').click()
+
+    def assert_user_data(self, full_name, email, gender,
+                         phone_number, birthday, subjects, hobbies,
+                         picture, address, state_city):
+        hobbiess = ''
+        for hobby in hobbies:
+            if hobbiess == '':
+                hobbiess += hobby
+            else:
+                hobbiess += ', ' + hobby
+        browser.all('.table').all('td').even.should(
+            have.exact_texts(
+                full_name,
+                email,
+                gender,
+                str(phone_number),
+                birthday,
+                subjects,
+                hobbiess,
+                picture,
+                address,
+                state_city))
 
     def assert_filled_table(self):
         browser.element('.modal-header').should(have.text('Thanks for submitting the form'))

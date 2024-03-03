@@ -1,4 +1,5 @@
-from models.models import RegistrationPage, User
+from demoqa_tests.models.data import User
+from demoqa_tests.models.models import RegistrationPage
 
 
 def test_fill():
